@@ -1,0 +1,26 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: provider-service
+
+dubbo:
+  application:
+    name: provider-service
+    # Habilita o registro unificado e o QOS (Quality of Service) para verificação via terminal
+    qos-enable: true
+    qos-port: 22222
+    qos-accept-foreign-ip: false
+  registry:
+    # Usando Apache ZooKeeper como centro de Service Discovery & Registro
+    address: zookeeper://zookeeper:2181
+    timeout: 10000
+  protocol:
+    # Protocolo Triple (gRPC/HTTP/2 nativo do Dubbo 3)
+    name: triple
+    port: 50051
+  provider:
+    # Configuração global padrão para serviços exportados
+    timeout: 3000
+    retries: 2

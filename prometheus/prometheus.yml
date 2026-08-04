@@ -1,0 +1,16 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: 'dubbo-provider'
+    static_configs:
+      - targets: ['provider-service:8081']
+
+  - job_name: 'dubbo-consumer'
+    static_configs:
+      - targets: ['consumer-service:8080']

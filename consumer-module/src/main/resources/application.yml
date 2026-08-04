@@ -1,0 +1,22 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: consumer-service
+
+dubbo:
+  application:
+    name: consumer-service
+    qos-enable: true
+    qos-port: 33333
+    qos-accept-foreign-ip: false
+  registry:
+    # Service Discovery & Centro de Registro do Dubbo
+    address: zookeeper://zookeeper:2181
+    timeout: 10000
+  consumer:
+    # Desativa verificação rígida no startup para permitir resiliência se o Provedor subir depois
+    check: false
+    timeout: 3000
+    retries: 2

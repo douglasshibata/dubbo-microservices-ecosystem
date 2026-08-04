@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  zookeeper:
+    image: zookeeper:3.9.2
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      ZOO_MY_ID: 1
+    restart: always
+
+  dubbo-admin:
+    image: apache/dubbo-admin:0.7.0
+    container_name: dubbo-admin
+    ports:
+      - "38080:8080"
+    depends_on:
+      - zookeeper
+    environment:
+      - admin.registry.address=zookeeper://zookeeper:2181
+      - admin.config-center=zookeeper://zookeeper:2181
+      - admin.metadata-report.address=zookeeper://zookeeper:2181
+    restart: always
+
+  provider-service:
+    build:
+      context: ./provider-module
+      dockerfile: Dockerfile
+    container_name: provider-service
+    ports:
+      - "8081:8081"
+      - "50051:50051"
+      - "22222:22222"
+    depends_on:
+      - zookeeper
+    restart: on-failure
+
+  consumer-service:
+    build:
+      context: ./consumer-module
+      dockerfile: Dockerfile
+    container_name: consumer-service
+    ports:
+      - "8080:8080"
+      - "33333:33333"
+    depends_on:
+      - zookeeper
+    restart: on-failure
+
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    container_name: prometheus
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    restart: always
+
+  grafana:
+    image: grafana/grafana:11.2.0
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    restart: always
